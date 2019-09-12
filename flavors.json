@@ -1,6 +1,13 @@
 {
   "flavors": [
     {
+      "name": "proxy",
+      "modules": [
+        "https://github.com/SpiderLabs/ModSecurity-nginx.git:v1.0.0",
+        "https://github.com/openresty/lua-nginx-module.git:v0.10.15"
+      ]
+    },
+    {
       "name": "tsuru",
       "modules": [
         "https://github.com/openresty/headers-more-nginx-module.git",
