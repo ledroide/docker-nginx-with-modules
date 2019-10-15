@@ -1,4 +1,4 @@
-ARG nginx_version=1.16.1
+ARG nginx_version=1.17.4-perl
 FROM nginx:${nginx_version} AS build
 
 SHELL ["/bin/bash", "-c"]
@@ -7,7 +7,8 @@ RUN set -x \
     && apt-get update \
     && apt-get install -y --no-install-suggests \
        libluajit-5.1-dev libpam0g-dev zlib1g-dev libpcre3-dev \
-       libexpat1-dev git curl build-essential libxml2 libxslt1.1 libxslt1-dev autoconf libtool libssl-dev
+       libexpat1-dev git curl build-essential libxml2 libxslt1.1 libxslt1-dev autoconf libtool libssl-dev \
+       libmaxminddb0 libmaxminddb-dev libperl-dev
 
 ARG modsecurity_version=v3.0.3
 RUN set -x \
@@ -52,6 +53,8 @@ RUN set -x \
     && ln -s /usr/local/src/nginx-${nginx_version} /usr/local/src/nginx \
     && cd /usr/local/src/nginx \
     && configure_args=$(nginx -V 2>&1 | grep "configure arguments:" | awk -F 'configure arguments:' '{print $2}'); \
+    configure_args="$configure_args --with-http_perl_module=dynamic"; \
+    echo $configure_args; \
     IFS=','; \
     for module in ${modules}; do \
         module_repo=$(echo $module | sed -E 's@^(((https?|git)://)?[^:]+).*@\1@g'); \
@@ -83,14 +86,16 @@ RUN set -x \
 RUN set -x \
     && strip --strip-unneeded /usr/local/bin/* /usr/local/lib/*.a /usr/local/lib/*.so* /usr/lib/nginx/modules/*.so
 
-FROM nginx:${nginx_version}
+FROM nginx:${nginx_version}-perl
 
 COPY --from=build /usr/local/bin      /usr/local/bin
 COPY --from=build /usr/local/include  /usr/local/include
 COPY --from=build /usr/local/lib      /usr/local/lib
 COPY --from=build /usr/local/etc      /usr/local/etc
 COPY --from=build /usr/local/share    /usr/local/share
+COPY --from=build /usr/lib/x86_64-linux-gnu   /usr/lib/x86_64-linux-gnu
 COPY --from=build /usr/lib/nginx/modules /usr/lib/nginx/modules
+COPY nginx.conf /etc/nginx/
 
 ENV LUAJIT_LIB=/usr/local/lib \
     LUAJIT_INC=/usr/local/include/luajit-2.1
@@ -126,3 +131,5 @@ EXPOSE 8080 8443
 USER nginx
 
 WORKDIR /etc/nginx
+
+CMD ["nginx-debug", "-g", "daemon off;"]
