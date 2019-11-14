@@ -22,6 +22,10 @@ Nginx_version parameter relates to both :
 * tag for perl variant of base image from (https://hub.docker.com/_/nginx?tab=tags)
 It is usually the same value, but it is better to check before.
 
+```bash
+export NGINXVERSION=1.17.5
+```
+
 ## flavors
 
 Flavors are a way to group a set of modules to generate a custom nginx image.
@@ -31,7 +35,7 @@ URLs.
 To build a flavor you can use the provided Makefile:
 
 ```bash
-make image flavor=proxy nginx_version=1.17.5
+make image flavor=proxy nginx_version=${NGINXVERSION}
 ```
 
 To build a flavor, `jq` is required, cf. [download section of jq](https://stedolan.github.io/jq/download/)
@@ -42,7 +46,7 @@ Default image repo/name is *dockerregistry.questel.fr/systeam/nginx-$(flavor)* (
 
 ## default tag
 
-Default tag is made of nginx versio, git tag and last commit, using `git describe --tag`.
+Default tag is made of nginx version, git tag and last commit, using `git describe --tag`.
 It can be overwritten at _make_ step with *image_tag* variable.
 
 ## variant with proxy logs
@@ -51,6 +55,13 @@ This variant logs in file **/var/log/nginx/proxy.log** whereas regular image log
 
 First build a regular image as seen below, or use an existing image already built. Then build the proxy log variant.
 ```bash
-BASETAG=1.17.5-0.2-3-gc5935d3 ; docker build -t dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}-log --build-arg base_tag=${BASETAG} -f Dockerfile-with-logs .
+export GITTAG=$(git describe --tag)    #  should be the same as regular image
+export BASETAG=${NGINXVERSION}-${GITTAG}
+docker build -t dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}-log --build-arg base_tag=${BASETAG} -f Dockerfile-with-logs .
 ```
 
+## docker push
+```bash
+docker push dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}
+docker push dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}-log
+```
