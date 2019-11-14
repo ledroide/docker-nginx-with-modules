@@ -17,11 +17,12 @@ docker build --build-arg modules=https://github.com/vozlt/nginx-module-vts.git:v
 
 ## nginx version
 
-nginx_version parameter relates to both :
-* version downloaded from https://nginx.org/download/
-* tag for base image from
+Nginx_version parameter relates to both :
+* version downloaded from (https://nginx.org/download/)
+* tag for perl variant of base image from (https://hub.docker.com/_/nginx?tab=tags)
+It is usually the same value, but it is better to check before.
 
-## Flavors
+## flavors
 
 Flavors are a way to group a set of modules to generate a custom nginx image.
 Flavors can be added by editing the `flavors.json` file and listing the module
@@ -34,6 +35,15 @@ make image flavor=proxy nginx_version=1.17.5
 ```
 
 To build a flavor, `jq` is required, cf. [download section of jq](https://stedolan.github.io/jq/download/)
+
+## default image
+
+Default image repo/name is *dockerregistry.questel.fr/systeam/nginx-$(flavor)* (depending on which flavor is chosen.)
+
+## default tag
+
+Default tag is made of nginx versio, git tag and last commit, using `git describe --tag`.
+It can be overwritten at _make_ step with *image_tag* variable.
 
 ## variant with proxy logs
 
