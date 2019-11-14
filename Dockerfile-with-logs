@@ -1,0 +1,4 @@
+ARG base_image=dockerregistry.questel.fr/systeam/nginx-proxy
+ARG base_tag=1.17.5-0.2-3-gc5935d3
+FROM ${base_image}:${base_tag}
+COPY nginx-with-logs.conf /etc/nginx/nginx.conf
