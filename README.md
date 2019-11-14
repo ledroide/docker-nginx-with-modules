@@ -65,3 +65,7 @@ docker build -t dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}-log --b
 docker push dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}
 docker push dockerregistry.questel.fr/systeam/nginx-proxy:${BASETAG}-log
 ```
+
+## links
+* [original tsuru/docker-nginx-with-modules repo](https://github.com/tsuru/docker-nginx-with-modules.git)
+* [nginx logging guide](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/)
