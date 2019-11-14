@@ -1,5 +1,7 @@
-nginx_version ?= 1.17.4
+nginx_version ?= 1.17.5
 cached_layers ?= true
+docker_repository ?= dockerregistry.questel.fr/systeam
+image_tag ?= $$(git describe --tags)
 
 all:
 	flavors=$$(jq -er '.flavors[].name' flavors.json) && \
@@ -7,7 +9,7 @@ all:
 
 image:
 	modules=$$(jq -er '.flavors[] | select(.name == "$(flavor)") | .modules | join(",")' flavors.json) && \
-	docker build -t tsuru/nginx-$(flavor):$(nginx_version) $$(if [ "$(cached_layers)" = "false" ]; then echo "--no-cache"; fi) --build-arg nginx_version=$(nginx_version) --build-arg modules="$$modules" .
+	docker build -t $(docker_repository)/nginx-$(flavor):$(nginx_version)-$(image_tag) $$(if [ "$(cached_layers)" = "false" ]; then echo "--no-cache"; fi) --build-arg nginx_version=$(nginx_version) --build-arg modules="$$modules" .
 
 test: image
 	@docker rm -f test-tsuru-nginx-$(flavor)-$(nginx_version) || true
