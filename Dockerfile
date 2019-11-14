@@ -1,5 +1,5 @@
-ARG nginx_version=1.17.4-perl
-FROM nginx:${nginx_version} AS build
+ARG nginx_version=1.17.5
+FROM nginx:${nginx_version}-perl AS build
 
 SHELL ["/bin/bash", "-c"]
 
@@ -95,7 +95,6 @@ COPY --from=build /usr/local/etc      /usr/local/etc
 COPY --from=build /usr/local/share    /usr/local/share
 COPY --from=build /usr/lib/x86_64-linux-gnu   /usr/lib/x86_64-linux-gnu
 COPY --from=build /usr/lib/nginx/modules /usr/lib/nginx/modules
-COPY nginx.conf /etc/nginx/
 
 ENV LUAJIT_LIB=/usr/local/lib \
     LUAJIT_INC=/usr/local/include/luajit-2.1
@@ -126,10 +125,10 @@ RUN set -x \
     && mkdir -p /var/cache/nginx \
     && chown -R nginx:nginx /etc/nginx /var/log/nginx /var/cache/nginx /var/run/nginx.pid /var/log/modsec_audit.log
 
+COPY nginx.conf /etc/nginx/
+COPY questel-favicon.ico /usr/share/nginx/html/favicon.ico
+
 EXPOSE 8080 8443
-
 USER nginx
-
 WORKDIR /etc/nginx
-
 CMD ["nginx-debug", "-g", "daemon off;"]
