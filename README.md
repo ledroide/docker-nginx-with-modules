@@ -23,7 +23,7 @@ Nginx_version parameter relates to both :
 It is usually the same value, but it is better to check before.
 
 ```bash
-export NGINXVERSION=1.17.5
+export NGINXVERSION=1.19.0
 ```
 
 ## flavors
