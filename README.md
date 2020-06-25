@@ -42,7 +42,7 @@ To build a flavor, `jq` is required, cf. [download section of jq](https://stedol
 
 ## default image
 
-Default image repo/name is *dockerregistry.questel.fr/systeam/nginx-$(flavor)* (depending on which flavor is chosen.)
+Default image repo/name is *dockerregistry.questel.fr/systeam/nginx-${flavor}* (depending on which flavor is chosen.)
 
 ## default tag
 
