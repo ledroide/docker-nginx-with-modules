@@ -10,9 +10,14 @@ argument with a comma separated list of git repository URLs to be included in
 the image. Example:
 
 ```
+```bash
 git clone https://github.com/tsuru/docker-nginx-with-modules.git
 cd docker-nginx-with-modules
-docker build --build-arg modules=https://github.com/vozlt/nginx-module-vts.git:v0.1.17,https://github.com/openresty/echo-nginx-module.git .
+```
+
+```bash
+export NGINXVERSION=1.19.0
+docker build --build-arg modules=https://github.com/vozlt/nginx-module-vts.git:v0.1.17,https://github.com/openresty/echo-nginx-module.git --build-arg nginx_version=${NGINXVERSION} .
 ```
 
 ## nginx version
